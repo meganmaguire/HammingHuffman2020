@@ -1,5 +1,5 @@
-import com.HammingHuffman.gui.GUI_Strings;
-import com.HammingHuffman.gui.Main_Window;
+import GUI.GUI_Strings;
+import GUI.Main_Window;
 
 import javax.swing.*;
 

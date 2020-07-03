@@ -1,4 +1,4 @@
-package com.HammingHuffman.gui;
+package GUI;
 
 public class GUI_Strings {
     public static String window_title = "TP FINAL - HAMMING HUFFMAN 2020";

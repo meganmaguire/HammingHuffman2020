@@ -1,4 +1,4 @@
-package com.HammingHuffman.gui;
+package GUI;
 
 import model.Result_Type;
 
@@ -11,7 +11,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 
-public class Main_Window {
+public class Main_Window extends JFrame{
 
     private GUI_State gui_state;
     private JPanel rootPanel; //Root where is all mounted on
@@ -43,6 +43,8 @@ public class Main_Window {
     private JTextField first_panel_time_text_field;
     private JLabel first_panel_date_edit_label;
     private JLabel first_panel_hour_edit_label;
+    private JPanel title_panel;
+    private JLabel title;
 
 
     public Main_Window() {
@@ -271,7 +273,7 @@ public class Main_Window {
 
     //If Successful operation
     public void succesful_operationDialog(Result_Type fileSize){
-        JOptionPane.showMessageDialog(null, "Operación Exitosa !\n *Tamaño Original = "+fileSize.getOriginalSize() + "\n *Tamaño Nuevo = "+fileSize.getNewSize(), "Resultado de la Operación", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(null, "¡Operación Exitosa!\n\n \tTamaño Original = \t"+fileSize.getOriginalSize() + " bytes" + "\n \tTamaño Nuevo = \t" + fileSize.getNewSize() + " bytes", "Resultado de la Operación", JOptionPane.INFORMATION_MESSAGE);
     }
 
     //Error in operation
