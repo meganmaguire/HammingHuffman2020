@@ -2,7 +2,6 @@ import com.HammingHuffman.gui.GUI_Strings;
 import com.HammingHuffman.gui.Main_Window;
 
 import javax.swing.*;
-import java.awt.*;
 
 
 public class Main {
@@ -12,7 +11,7 @@ public class Main {
         Main_Window mainWindow= new Main_Window();
 
         //2°Init Frame where this content will go, with it's title
-        JFrame frame = new JFrame(GUI_Strings.window_title);
+        JFrame frame = new JFrame("Titulo");
         frame.pack();
 
         //3°Set content to the pane
