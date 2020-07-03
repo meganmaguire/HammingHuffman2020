@@ -1,10 +1,14 @@
 package com.HammingHuffman.gui;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileSystemView;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputMethodEvent;
+import java.awt.event.InputMethodListener;
 import java.io.File;
 
 public class Main_Window {
@@ -35,6 +39,8 @@ public class Main_Window {
     private JLabel second_panel_title_label;
     private JLabel second_panel_file_label;
     private JLabel second_panel_path_label;
+    private JTextField first_panel_date_text_field;
+    private JTextField first_panel_time_text_field;
 
 
     public Main_Window() {
@@ -131,6 +137,62 @@ public class Main_Window {
                 gui_state.second_panel_action();
             }
         });
+
+        first_panel_date_text_field.getDocument().addDocumentListener(new DocumentListener() {
+
+            public void changedUpdate(DocumentEvent e) {
+                warn();
+            }
+            public void removeUpdate(DocumentEvent e) {
+                warn();
+            }
+            public void insertUpdate(DocumentEvent e) {
+                warn();
+            }
+            public void warn() {
+                String[] aux_var = first_panel_date_text_field.getText().split("/");
+
+                try{
+                    gui_state.day = Integer.parseInt(aux_var[0]);
+                    gui_state.month = Integer.parseInt(aux_var[1]);
+                    gui_state.year = Integer.parseInt(aux_var[2]);
+                }
+                catch (Exception e){
+                /*    JOptionPane.showMessageDialog(null,
+                            "Error: Ingresar fecha válida", "Mensaje de Error",
+                            JOptionPane.ERROR_MESSAGE);*/
+                }
+            }
+
+        });
+
+        first_panel_time_text_field.getDocument().addDocumentListener((new DocumentListener() {
+
+            public void changedUpdate(DocumentEvent e) {
+                warn();
+            }
+            public void removeUpdate(DocumentEvent e) {
+                warn();
+            }
+            public void insertUpdate(DocumentEvent e) {
+                warn();
+            }
+            public void warn() {
+                String[] aux_var = first_panel_time_text_field.getText().split(":");
+
+                try{
+                    gui_state.hour = Integer.parseInt(aux_var[0]);
+                    gui_state.minute = Integer.parseInt(aux_var[1]);
+                    gui_state.segs = Integer.parseInt(aux_var[2]);
+                }
+                catch (Exception e){
+                /*    JOptionPane.showMessageDialog(null,
+                            "Error: Ingresar fecha válida", "Mensaje de Error",
+                            JOptionPane.ERROR_MESSAGE);*/
+                }
+            }
+
+        }));
     }
 
 
@@ -155,7 +217,7 @@ public class Main_Window {
     //Center the JFrame on the screen
     public void setCentered(JFrame frame){
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        frame.setSize(screenSize.width/2, screenSize.height/2);
+        frame.setSize(screenSize.width/2-100, screenSize.height/2 + 100);
         frame.setLocationRelativeTo(null);
     }
 
