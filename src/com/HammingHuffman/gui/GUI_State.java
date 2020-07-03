@@ -1,5 +1,7 @@
 package com.HammingHuffman.gui;
 
+import model.Result_Type;
+
 //Class for object which holds the state of the GUI
 public class GUI_State {
 
@@ -43,12 +45,19 @@ public class GUI_State {
     }
 
     //TODO: CODE TO MODIFY INTERNALLY, ACCORDING TO STATE! - FIRST PANEL ACTION
-    public void first_panel_action(){
+    public Result_Type first_panel_action(){
         System.out.println(this);
+
+
+        //Example of return
+        return new Result_Type(300.0, 100.0, false);
     }
 
     //TODO: CODE TO MODIFY INTERNALLY, ACCORDING TO STATE! - SECOND PANEL ACTION
-    public void second_panel_action(){
+    public Result_Type second_panel_action(){
         System.out.println(this);
+
+        //Example of return
+        return new Result_Type(300.0, 100.0, true);
     }
 }

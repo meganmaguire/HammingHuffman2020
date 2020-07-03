@@ -1,5 +1,7 @@
 package com.HammingHuffman.gui;
 
+import model.Result_Type;
+
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -66,7 +68,12 @@ public class Main_Window {
         first_panel_button_accept.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                gui_state.first_panel_action();
+                Result_Type infoToShow = gui_state.first_panel_action();
+                if(infoToShow.isError())
+                    error_operation_Dialog();
+                else
+                    succesful_operationDialog(infoToShow);
+
             }
         });
         first_panel_module_size_comboBox.addActionListener(new ActionListener() {
@@ -134,7 +141,11 @@ public class Main_Window {
         second_panel_button_accept.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                gui_state.second_panel_action();
+                Result_Type infoToShow = gui_state.second_panel_action();
+                if(infoToShow.isError())
+                    error_operation_Dialog();
+                else
+                    succesful_operationDialog(infoToShow);
             }
         });
 
@@ -256,6 +267,16 @@ public class Main_Window {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         frame.setSize(screenSize.width/2-100, screenSize.height/2 + 100);
         frame.setLocationRelativeTo(null);
+    }
+
+    //If Successful operation
+    public void succesful_operationDialog(Result_Type fileSize){
+        JOptionPane.showMessageDialog(null, "Operación Exitosa !\n *Tamaño Original = "+fileSize.getOriginalSize() + "\n *Tamaño Nuevo = "+fileSize.getNewSize(), "Resultado de la Operación", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    //Error in operation
+    public void error_operation_Dialog(){
+        JOptionPane.showMessageDialog(null, "Operación con Error !", "Mensaje de Error", JOptionPane.ERROR_MESSAGE);
     }
 
     private void createUIComponents() {
