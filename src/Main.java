@@ -14,7 +14,7 @@ public class Main {
         Main_Window mainWindow= new Main_Window();
 
         //2°Init Frame where this content will go, with it's title
-        JFrame frame = new JFrame("Hamming - Huffman 2020");
+        JFrame frame = new JFrame(GUI_Strings.window_title);
         frame.pack();
 
         //3°Set content to the pane

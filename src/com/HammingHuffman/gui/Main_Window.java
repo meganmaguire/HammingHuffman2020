@@ -7,8 +7,6 @@ import javax.swing.filechooser.FileSystemView;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.InputMethodEvent;
-import java.awt.event.InputMethodListener;
 import java.io.File;
 
 public class Main_Window {
@@ -41,6 +39,8 @@ public class Main_Window {
     private JLabel second_panel_path_label;
     private JTextField first_panel_date_text_field;
     private JTextField first_panel_time_text_field;
+    private JLabel first_panel_date_edit_label;
+    private JLabel first_panel_hour_edit_label;
 
 
     public Main_Window() {
@@ -72,7 +72,7 @@ public class Main_Window {
         first_panel_module_size_comboBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                switch (first_panel_module_size_comboBox.getSelectedIndex()){
+                switch (first_panel_module_size_comboBox.getSelectedIndex()) {
                     case 0:
                         gui_state.first_panel_module_size_first = 32;
                         break;
@@ -143,21 +143,23 @@ public class Main_Window {
             public void changedUpdate(DocumentEvent e) {
                 warn();
             }
+
             public void removeUpdate(DocumentEvent e) {
                 warn();
             }
+
             public void insertUpdate(DocumentEvent e) {
                 warn();
             }
+
             public void warn() {
                 String[] aux_var = first_panel_date_text_field.getText().split("/");
 
-                try{
+                try {
                     gui_state.day = Integer.parseInt(aux_var[0]);
                     gui_state.month = Integer.parseInt(aux_var[1]);
                     gui_state.year = Integer.parseInt(aux_var[2]);
-                }
-                catch (Exception e){
+                } catch (Exception e) {
                 /*    JOptionPane.showMessageDialog(null,
                             "Error: Ingresar fecha válida", "Mensaje de Error",
                             JOptionPane.ERROR_MESSAGE);*/
@@ -171,21 +173,23 @@ public class Main_Window {
             public void changedUpdate(DocumentEvent e) {
                 warn();
             }
+
             public void removeUpdate(DocumentEvent e) {
                 warn();
             }
+
             public void insertUpdate(DocumentEvent e) {
                 warn();
             }
+
             public void warn() {
                 String[] aux_var = first_panel_time_text_field.getText().split(":");
 
-                try{
+                try {
                     gui_state.hour = Integer.parseInt(aux_var[0]);
                     gui_state.minute = Integer.parseInt(aux_var[1]);
                     gui_state.segs = Integer.parseInt(aux_var[2]);
-                }
-                catch (Exception e){
+                } catch (Exception e) {
                 /*    JOptionPane.showMessageDialog(null,
                             "Error: Ingresar fecha válida", "Mensaje de Error",
                             JOptionPane.ERROR_MESSAGE);*/
@@ -193,10 +197,43 @@ public class Main_Window {
             }
 
         }));
+
+        /* LABELS USING GUI_STRINGS*/
+        init_strings();
+
     }
 
+    //Set GUI_Strings to UI
+    public void init_strings(){
 
-    /* SCREEN UTILITIES METHODS */
+
+        /*FIRST PANEL */
+        first_panel_title.setText(GUI_Strings.first_panel_title);
+
+        first_panel_date_label.setText(GUI_Strings.date_section_title);
+        first_panel_date_edit_label.setText(GUI_Strings.date_label);
+        first_panel_hour_edit_label.setText(GUI_Strings.hour_label);
+
+        first_panel_file_label.setText(GUI_Strings.load_file);
+        first_panel_path_label.setText(GUI_Strings.path);
+
+        first_panel_module_size_label.setText(GUI_Strings.module_size);
+        first_panel_insert_error_label.setText(GUI_Strings.insert_errors);
+
+        first_panel_compress_checkBox.setText(GUI_Strings.huffman);
+        first_panel_protect_checkBox.setText(GUI_Strings.hamming);
+
+        /*SECOND PANEL */
+
+        second_panel_title_label.setText(GUI_Strings.second_panel_title);
+
+        second_panel_file_label.setText(GUI_Strings.load_file);
+        second_panel_path_label.setText(GUI_Strings.path);
+
+        second_panel_fix_checkBox.setText(GUI_Strings.toCorrect);
+        second_panel_unprotect_checkBox.setText(GUI_Strings.dehamming);
+        second_panel_unzip_checkBox.setText(GUI_Strings.dehuffman);
+    }
 
     //Returns absolute path to the file selected
     public String file_chooser_dialog(){

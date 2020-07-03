@@ -22,6 +22,7 @@ public class GUI_State {
     boolean second_panel_toCorrect = false;
     boolean second_panel_decompress = false;
 
+    //Good for debugging!
     @Override
     public String toString() {
         return "GUI_State{" +
