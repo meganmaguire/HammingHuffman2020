@@ -47,14 +47,14 @@ public class Main_Window {
         first_panel_button_loadFile.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                gui_state.path_protect_compress = file_chooser_dialog();
-                first_panel_text_field_path.setText(gui_state.path_protect_compress);
+                gui_state.first_panel_path_protect_compress = file_chooser_dialog();
+                first_panel_text_field_path.setText(gui_state.first_panel_path_protect_compress);
             }
         });
         first_panel_protect_checkBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                gui_state.protect = first_panel_protect_checkBox.isSelected();
+                gui_state.first_panel_protect = first_panel_protect_checkBox.isSelected();
             }
         });
         first_panel_button_accept.addActionListener(new ActionListener() {
@@ -68,19 +68,19 @@ public class Main_Window {
             public void actionPerformed(ActionEvent e) {
                 switch (first_panel_module_size_comboBox.getSelectedIndex()){
                     case 0:
-                        gui_state.module_size_first = 32;
+                        gui_state.first_panel_module_size_first = 32;
                         break;
                     case 1:
-                        gui_state.module_size_first = 128;
+                        gui_state.first_panel_module_size_first = 128;
                         break;
                     case 2:
-                        gui_state.module_size_first = 1024;
+                        gui_state.first_panel_module_size_first = 1024;
                         break;
                     case 3:
-                        gui_state.module_size_first = 4096;
+                        gui_state.first_panel_module_size_first = 4096;
                         break;
                     case 4:
-                        gui_state.module_size_first = 16384;
+                        gui_state.first_panel_module_size_first = 16384;
                         break;
                 }
             }
@@ -88,13 +88,13 @@ public class Main_Window {
         first_panel_insert_error_checkBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                gui_state.insertError = first_panel_insert_error_checkBox.isSelected();
+                gui_state.first_panel_insertError = first_panel_insert_error_checkBox.isSelected();
             }
         });
         first_panel_compress_checkBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                gui_state.compress = first_panel_compress_checkBox.isSelected();
+                gui_state.first_panel_compress = first_panel_compress_checkBox.isSelected();
             }
         });
 
@@ -103,26 +103,26 @@ public class Main_Window {
         second_panel_file_button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                gui_state.path_unprotect_uncompress = file_chooser_dialog();
-                second_panel_text_field_path.setText(gui_state.path_unprotect_uncompress);
+                gui_state.second_panel_path_unprotect_uncompress = file_chooser_dialog();
+                second_panel_text_field_path.setText(gui_state.second_panel_path_unprotect_uncompress);
             }
         });
         second_panel_unprotect_checkBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                gui_state.protect = second_panel_unprotect_checkBox.isSelected();
+                gui_state.second_panel_unprotect = second_panel_unprotect_checkBox.isSelected();
             }
         });
         second_panel_fix_checkBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                gui_state.toCorrect = second_panel_fix_checkBox.isSelected();
+                gui_state.second_panel_toCorrect = second_panel_fix_checkBox.isSelected();
             }
         });
         second_panel_unzip_checkBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                gui_state.decompress = second_panel_unzip_checkBox.isSelected();
+                gui_state.second_panel_decompress = second_panel_unzip_checkBox.isSelected();
             }
         });
         second_panel_button_accept.addActionListener(new ActionListener() {
