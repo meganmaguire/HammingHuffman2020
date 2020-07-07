@@ -32,7 +32,7 @@ public class Compresion {
             // Archivo de escritura
             File fileW = new File(dst);
             fileW.createNewFile();
-            FileOutputStream fw2 = new FileOutputStream(fileW);
+            FileOutputStream fw2 = new FileOutputStream(fileW,true);
             BufferedOutputStream bw = new BufferedOutputStream(fw2);
 
             // Archivo de tabla

@@ -4,6 +4,9 @@ import model.DateBlock;
 import model.ResultType;
 
 import javax.swing.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -37,6 +40,10 @@ public class GUI_State {
     SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm");
     SimpleDateFormat datetimeFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm");
 
+    /* Strings */
+    static String originalText = "";
+    static String processedText = "";
+
     /* Variables estáticas */
     private static Map<Character,Integer> tablaFreq = new HashMap<>();
     private static Map<Character,String> tablaCod = new HashMap<>();
@@ -68,11 +75,16 @@ public class GUI_State {
 
         String[] nameTrim;
         double[] sizes = new double[2];
+        double sizeOriginal = 0;
+        double sizeNew = 0;
 
         Date date = first_panel_date_time_model.getDate();
 
         String stringDate = dateFormat.format(date);
         String stringTime = timeFormat.format(date);
+
+        originalText = "";
+        processedText = "";
 
 
         // Eligió comprimir
@@ -94,8 +106,11 @@ public class GUI_State {
 
 
             sizes = Huffman.Compresion.huffman(srcPath, dstPath);
+            sizeOriginal = sizes[0];
+            sizeNew = sizes[1];
 
             resetHuffman();
+            loadStrings(srcPath,dstPath);
 
         }
         // Eligio proteger
@@ -155,18 +170,22 @@ public class GUI_State {
             // Codifico
             sizes = Hamming.Codificacion.codificar(srcPath,dstPath,tamaño,first_panel_insertError);
 
-
+            if(!first_panel_compress){
+                sizeOriginal = sizes[0];
+            }
+            sizeNew = sizes[1];
 
             resetHamming();
+            loadStrings(first_panel_path_protect_compress,dstPath);
         }
 
 
         // Retorno para el cartel de alerta
         if(!first_panel_protect && !first_panel_compress){
-            return new ResultType("Debe seleccionarse alguna opción", sizes[0], sizes[1], true);
+            return new ResultType("Debe seleccionarse alguna opción", sizeOriginal, sizeNew, true);
         }
         else{
-            return new ResultType("¡Operación exitosa!",sizes[0], sizes[1], false);
+            return new ResultType("¡Operación exitosa!",sizeOriginal, sizeNew, false);
         }
 
     }
@@ -174,14 +193,20 @@ public class GUI_State {
 
     public ResultType second_panel_action(){
 
+
         String[] nameTrim;
         String newExtension = "";
         double[] sizes = new double[2];
+        double sizeOriginal = 0;
+        double sizeNew = 0;
 
         String dateTime;
 
         boolean readDate = false;
         boolean dateError = false;
+
+        originalText = "";
+        processedText = "";
 
 
         // Elige desproteger
@@ -240,7 +265,11 @@ public class GUI_State {
                 if(date.before(new Date())){
 
                     sizes = Hamming.Decodificacion.decodificar(srcPath,dstPath,tamaño,second_panel_toCorrect,true);
+                    sizeOriginal = sizes[0];
+                    sizeNew = sizes[1];
+
                     resetHamming();
+                    loadStrings(srcPath,dstPath);
                     readDate = true;
 
                 }
@@ -286,8 +315,13 @@ public class GUI_State {
                     if(date.before(new Date())){
 
                         sizes = Huffman.Descompresion.dehuffman(srcPath, dstPath, true);
+                        if(!second_panel_unprotect){
+                            sizeOriginal = sizes[0];
+                        }
+                        sizeNew = sizes[1];
+
                         resetHuffman();
-                        readDate = true;
+                        loadStrings(second_panel_path_unprotect_uncompress,dstPath);
 
                     }
                     else{
@@ -300,19 +334,25 @@ public class GUI_State {
             }
             else{
                 sizes = Huffman.Descompresion.dehuffman(srcPath, dstPath, false);
+                if(!second_panel_unprotect){
+                    sizeOriginal = sizes[0];
+                }
+                sizeNew = sizes[1];
+
                 resetHuffman();
+                loadStrings(second_panel_path_unprotect_uncompress,dstPath);
             }
         }
 
         // Retorno para el cartel de alerta
         if(!second_panel_unprotect && !second_panel_decompress){
-            return new ResultType("Debe seleccionarse alguna opción", sizes[0], sizes[1], true);
+            return new ResultType("Debe seleccionarse alguna opción", sizeOriginal, sizeNew, true);
         }
         if(dateError){
-            return new ResultType("El archivo no puede descomprimirse/descompactarse porque la fecha configurada es posterior a la actual", sizes[0], sizes[1], dateError);
+            return new ResultType("El archivo no puede descomprimirse/descompactarse porque la fecha configurada es posterior a la actual", sizeOriginal, sizeNew, dateError);
         }
         else{
-            return new ResultType("¡Operación exitosa!",sizes[0], sizes[1], dateError);
+            return new ResultType("¡Operación exitosa!",sizeOriginal, sizeNew, dateError);
         }
 
     }
@@ -332,5 +372,34 @@ public class GUI_State {
         Huffman.Descompresion.setTablaDecod(new HashMap<>());
     }
 
+    public static void loadStrings(String src, String dst){
+
+        BufferedReader br;
+        String aux;
+
+        try {
+            br = new BufferedReader(new FileReader(src));
+
+            aux = br.readLine();
+
+            while(aux != null){
+                originalText += aux;
+                aux = br.readLine();
+            }
+
+            br = new BufferedReader(new FileReader(dst));
+
+            aux = br.readLine();
+
+            while(aux != null){
+                processedText += aux;
+                aux = br.readLine();
+            }
+
+        }
+        catch(IOException e){
+            System.out.println("Error archivo");
+        }
+    }
 
 }

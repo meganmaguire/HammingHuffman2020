@@ -89,7 +89,7 @@ public class Codificacion {
             // Archivo de escritura
             File fileW = new File(dst);
             fileW.createNewFile();
-            FileOutputStream fw = new FileOutputStream(dst,true);
+            FileOutputStream fw = new FileOutputStream(fileW,true);
             BufferedOutputStream bw = new BufferedOutputStream(fw);
 
             module = LecturaArchivo.leerBits(br, (short) (tamaño-bitsControl));

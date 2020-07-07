@@ -8,9 +8,7 @@ package GUI;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-import javax.swing.SpinnerDateModel;
+import javax.swing.*;
 import javax.swing.filechooser.FileSystemView;
 import model.ResultType;
 
@@ -448,7 +446,7 @@ public class MainWindow extends javax.swing.JFrame {
     
     public String file_chooser_dialog(){
         JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getDefaultDirectory());
-        int returnValue = jfc.showOpenDialog(null);
+        int returnValue = jfc.showOpenDialog(this);
         if (returnValue == JFileChooser.APPROVE_OPTION) {
             File selectedFile = jfc.getSelectedFile();
             return selectedFile.getAbsolutePath();
@@ -457,12 +455,18 @@ public class MainWindow extends javax.swing.JFrame {
     }
     
     public void succesful_operationDialog(ResultType result){
-        JOptionPane.showMessageDialog(null, result.getMsg() + "\n\n \tTamaño Original = \t"+result.getOriginalSize() + " bytes" + "\n \tTamaño Nuevo = \t" + result.getNewSize() + " bytes", "Resultado de la Operación", JOptionPane.INFORMATION_MESSAGE);
+        int value;
+        value = JOptionPane.showConfirmDialog(this, result.getMsg() + "\n\n \tTamaño Original = \t"+result.getOriginalSize() + " bytes" + "\n \tTamaño Nuevo = \t" + result.getNewSize() + " bytes \n\n ¿Desea visualizar los archivos?", "Resultado de la Operación", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE);
+        if(value == JOptionPane.YES_OPTION){
+            JFrame documents = new ShowDocuments(gui_state.originalText,gui_state.processedText,result.getOriginalSize(),result.getNewSize());
+            documents.setLocationRelativeTo(this);
+            documents.setVisible(true);
+        }
     }
 
     //Error in operation
     public void error_operation_Dialog(ResultType result){
-        JOptionPane.showMessageDialog(null, result.getMsg(), "Mensaje de Error", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(this, result.getMsg(), "Mensaje de Error", JOptionPane.ERROR_MESSAGE);
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
