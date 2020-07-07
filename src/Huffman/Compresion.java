@@ -8,22 +8,38 @@ import java.lang.Math;
 public class Compresion {
 
     // Tabla de frecuencia de símbolos
-    // TODO resetearla con cada huffman
     private static Map<Character,Integer> tablaFreq = new HashMap<>();
     private static Map<Character,String> tablaCod = new HashMap<>();
 
 
-    public static void huffman(String src, String dst){
+    public static double[] huffman(String src, String dst){
 
-        char[] module = new char[200];
+        char[] module;
         ModuloCod codModule;
         int chars = 0;
+        double[] sizes = new double[2];
+
+        String[] trim = dst.split("\\.");
+        trim[trim.length - 1] = "THU";
+        String tablePath = String.join(".",trim);
+
         try {
-            FileInputStream fr1 = new FileInputStream(src);
+            // Archivo de lectura
+            File fileR = new File(src);
+            FileInputStream fr1 = new FileInputStream(fileR);
             BufferedReader br = new BufferedReader(new InputStreamReader(fr1, StandardCharsets.ISO_8859_1));
 
-            FileOutputStream fw2 = new FileOutputStream(dst);
+            // Archivo de escritura
+            File fileW = new File(dst);
+            fileW.createNewFile();
+            FileOutputStream fw2 = new FileOutputStream(fileW);
             BufferedOutputStream bw = new BufferedOutputStream(fw2);
+
+            // Archivo de tabla
+            File fileT = new File(tablePath);
+            fileT.createNewFile();
+            FileOutputStream ft = new FileOutputStream(fileT);
+            BufferedOutputStream bt = new BufferedOutputStream(ft);
 
             // Leo un módulo
             module = LecturaArchivo.leerChars(br);
@@ -44,7 +60,7 @@ public class Compresion {
             generarCodificacion();
 
             // Escribo codificación en el txt
-            escribirTabla(bw);
+            escribirTabla(bt);
 
             // Cierro y vuelvo abrir archivo para leer desde el comienzo
             br.close();
@@ -69,13 +85,18 @@ public class Compresion {
             }
             while (chars != -1);
 
+            sizes[0] = fileR.length();
+            sizes[1] = fileW.length();
             bw.close();
+            bt.close();
             br.close();
 
         }
         catch (IOException e){
             System.out.println("No se pudo abrir el archivo");
         }
+
+        return sizes;
     }
 
     // Genera la tabla de frecuencia
@@ -143,10 +164,6 @@ public class Compresion {
 
         // Genero la codificación.
         posorden(root, "");
-
-        // TODO borrar
-        System.out.println(root.toString());
-        root.printArbol(root);
 
     }
 
@@ -238,8 +255,6 @@ public class Compresion {
         try {
 
             bw.write(tablaModule,0,indexModule);
-            bw.write('\n');
-            bw.write('\n');
         } catch (IOException e) {
 
             System.out.println("No se pudo escribir el archivo.");
@@ -331,5 +346,13 @@ public class Compresion {
 
         }
 
+    }
+
+    public static void setTablaFreq(Map<Character,Integer> tabla){
+        tablaFreq = tabla;
+    }
+
+    public static void setTablaCod(Map<Character,String> tabla){
+        tablaCod = tabla;
     }
 }

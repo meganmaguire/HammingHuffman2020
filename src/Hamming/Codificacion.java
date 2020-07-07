@@ -1,5 +1,7 @@
 package Hamming;
 
+import java.io.*;
+
 public class Codificacion {
 
     // TODO: Añadir las demás matrices.
@@ -70,6 +72,55 @@ public class Codificacion {
     };
 
     // </editor-fold>//
+
+    public static double[] codificar(String src, String dst, int tamaño, boolean error){
+
+        int[] module;
+        int[] hamModule;
+        int bitsControl = Decodificacion.controlBits(tamaño);
+        double[] sizes = new double[2];
+
+        try {
+            // Archivo de lectura
+            File fileR = new File(src);
+            FileInputStream fr = new FileInputStream(fileR);
+            BufferedInputStream br = new BufferedInputStream(fr);
+
+            // Archivo de escritura
+            File fileW = new File(dst);
+            fileW.createNewFile();
+            FileOutputStream fw = new FileOutputStream(dst);
+            BufferedOutputStream bw = new BufferedOutputStream(fw);
+
+            module = LecturaArchivo.leerBits(br, (short) (tamaño-bitsControl));
+
+            // reemplazar con do while y el primer read afuera.
+            while(!isEmpty(module)) {
+
+                hamModule = Codificacion.hamming(module, (short) tamaño);
+
+                if(error) {
+                    hamModule = Error.insertarError(hamModule, tamaño);
+                }
+
+                EscrituraArchivo.escribirInt(bw, hamModule);
+
+                module = LecturaArchivo.leerBits(br, (short) (tamaño-bitsControl));
+
+            }
+
+            // Tamaños para imprimir en bytes
+            sizes[0] = fileR.length();
+            sizes[1] = fileW.length();
+            bw.close();
+            br.close();
+
+        }
+        catch(IOException e){
+            System.out.println("Error en archivo");
+        }
+        return sizes;
+    }
 
     // ModuleSize indica el tamaño del módulo ya hamminizado (32, 128, etc).
     public static int[] hamming(int[] vInfo, short moduleSize){
@@ -159,6 +210,19 @@ public class Codificacion {
         return cont%2;
 
 
+    }
+
+    public static boolean isEmpty(int[] module) {
+        int bytes = Hamming.LecturaArchivo.getBytes();
+        boolean emptyModule = true;
+        for(int i=0; i<module.length; i++){
+            if(module[i] != 0 )
+                emptyModule = false;
+        }
+        if (bytes < 0 && emptyModule)
+            return true;
+        else
+            return false;
     }
 
 

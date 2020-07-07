@@ -113,5 +113,29 @@ public class EscrituraArchivo {
         }
     }
 
+    public static byte getByteActual(){
+        return byteActual;
+    }
+
+    public static byte getByteCompleto(){
+        return byteCompleto;
+    }
+
+    public static void setByteActual(byte byteAc){
+        byteActual = byteAc;
+    }
+
+    public static void setByteCompleto(byte byteCom){
+        byteCompleto = byteCom;
+    }
+
+    public static void setCantActual(byte cant){
+        cantActual = cant;
+    }
+
+    public static void setCantCompleto(byte cant){
+        cantCompleto = cant;
+    }
+
 
 }

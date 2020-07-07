@@ -1,10 +1,11 @@
 package GUI;
 
-import Huffman.*;
+import model.DateBlock;
 import model.Result_Type;
 
-import java.io.*;
-import java.nio.charset.StandardCharsets;
+import javax.swing.*;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,12 +18,12 @@ public class GUI_State {
     int first_panel_module_size_first = 32;
     boolean first_panel_insertError = false;
     boolean first_panel_compress = false;
+    SpinnerDateModel first_panel_date_time_model = new SpinnerDateModel();
     int day = 0;
     int month = 0;
     int year = 0;
     int hour = 0;
     int minute = 0;
-    int segs = 0;
 
     /* Second Panel Variables */
     String second_panel_path_unprotect_uncompress = "";
@@ -47,7 +48,7 @@ public class GUI_State {
                 ", \nfirst_panel_insertError=" + first_panel_insertError +
                 ", \nfirst_panel_compress=" + first_panel_compress +
                 ", \nday = " +day + " ,month = " + month +  ", year= " + year +
-                ", \nhour = "+ hour + ", minutes = " +minute + ", segs = " + segs +
+                ", \nhour = "+ hour + ", minutes = " +minute + ", segs = " +
                 "\n SECOND PANEL VARIABLES : " +
                 ", \nsecond_panel_path_unprotect_uncompress='" + second_panel_path_unprotect_uncompress + '\'' +
                 ", \nsecond_panel_unprotect=" + second_panel_unprotect +
@@ -58,165 +59,212 @@ public class GUI_State {
 
     //TODO: CODE TO MODIFY INTERNALLY, ACCORDING TO STATE! - FIRST PANEL ACTION
     public Result_Type first_panel_action(){
-        System.out.println(this);
 
         String[] nameTrim;
-        String path;
-        double inSize = 0;
-        double outSize = 0;
+        double[] sizes = new double[2];
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm");
+
+        Date date = first_panel_date_time_model.getDate();
+
+        String stringDate = dateFormat.format(date);
+        String stringTime = timeFormat.format(date);
+
+
+
 
         // Eligió comprimir
         if(first_panel_compress){
 
+            String srcPath = first_panel_path_protect_compress;
+            String dstPath;
+
+
             // Genero el nuevo path con el mismo nombre pero nueva extensión
-            nameTrim = first_panel_path_protect_compress.split("\\.");
+            nameTrim = srcPath.split("\\.");
             nameTrim[(nameTrim.length)-1] = "HUF";
-            path = String.join(".",nameTrim);
+            dstPath = String.join(".",nameTrim);
 
-            char[] module = new char[200];
-            ModuloCod codModule;
-            int chars = 0;
+            sizes = Huffman.Compresion.huffman(srcPath, dstPath);
 
-            try {
-                // Abro el archivo original
-                File fileR = new File(first_panel_path_protect_compress);
-                FileInputStream fr1 = new FileInputStream(fileR);
-                BufferedReader br = new BufferedReader(new InputStreamReader(fr1, StandardCharsets.ISO_8859_1));
-                inSize = fileR.length();
+            resetHuffman();
 
-                // Creo el nuevo archivo para escribir
-                File fileW = new File(path);
-                fileW.createNewFile();
-                FileOutputStream fw2 = new FileOutputStream(fileW);
-                BufferedOutputStream bw = new BufferedOutputStream(fw2);
+        }
+        // Eligio proteger
+        if(first_panel_protect){
 
-                // Leo un módulo
-                module = LecturaArchivo.leerChars(br);
-                chars = LecturaArchivo.getChars();
+            // Strings para paths de archivos
+            String extension = "";
+            String srcPath;
+            String dstPath;
 
-                do {
-                    // Generación de la tabla de frecuencia
-                    Compresion.tablaFrecuencia(module, chars);
+            // Tamaño del modulo Hamming
+            int tamaño = first_panel_module_size_first;
 
-                    // Leo un módulo
-                    module = LecturaArchivo.leerChars(br);
-                    chars = LecturaArchivo.getChars();
-
+            // Extensiones de Hamming sin error
+            if(!first_panel_insertError){
+                switch (first_panel_module_size_first){
+                    case 32: extension = "HA1"; break;
+                    case 128: extension = "HA2"; break;
+                    case 1024: extension = "HA3"; break;
+                    case 4096: extension = "HA4"; break;
+                    case 16384: extension = "HA5"; break;
                 }
-                while (chars != -1);
-
-                // Genero codificación
-                Compresion.generarCodificacion();
-
-                // Escribo codificación en el txt
-                Compresion.escribirTabla(bw);
-
-                // Cierro y vuelvo abrir archivo para leer desde el comienzo
-                br.close();
-                fr1 = new FileInputStream(first_panel_path_protect_compress);
-                br = new BufferedReader(new InputStreamReader(fr1, StandardCharsets.ISO_8859_1));
-
-                // Leo un módulo
-                module = LecturaArchivo.leerChars(br);
-                chars = LecturaArchivo.getChars();
-
-                do {
-                    // Codifico
-                    codModule = Compresion.codificar(module, chars);
-
-                    // Escribo
-                    EscrituraArchivo.escribirBytes(bw,codModule);
-
-                    // Leo un módulo
-                    module = LecturaArchivo.leerChars(br);
-                    chars = LecturaArchivo.getChars();
-
+            }
+            // Extensiones de Hamming con error
+            else{
+                switch (first_panel_module_size_first){
+                    case 32: extension = "HE1"; break;
+                    case 128: extension = "HE2"; break;
+                    case 1024: extension = "HE3"; break;
+                    case 4096: extension = "HE4"; break;
+                    case 16384: extension = "HE5"; break;
                 }
-                while (chars != -1);
-
-                outSize = fileW.length();
-                bw.close();
-                br.close();
-
-            } catch (IOException e) {
-                System.out.println("Error en archivo.");
             }
 
+            // Genero el nuevo path con el mismo nombre pero nueva extensión
+            nameTrim = first_panel_path_protect_compress.split("\\.");
+            nameTrim[(nameTrim.length)-1] = extension;
+            dstPath = String.join(".",nameTrim);
 
+            // Si comprime y protege entonces el path de entrada tiene otra extensión a la ingresada (HUF)
+            if(first_panel_compress){
+                // Abro el archivo comprimido
+                nameTrim = first_panel_path_protect_compress.split("\\.");
+                nameTrim[(nameTrim.length)-1] = "HUF";
+                srcPath = String.join(".",nameTrim);
+
+
+            }
+            else{
+                // Abro el archivo original
+                srcPath = first_panel_path_protect_compress;
+            }
+
+            DateBlock.insertDate(dstPath,stringDate,stringTime);
+
+            // Codifico
+            sizes = Hamming.Codificacion.codificar(srcPath,dstPath,tamaño,first_panel_insertError);
+
+
+
+            resetHamming();
         }
 
 
-        //Example of return
-        return new Result_Type(inSize, outSize, false);
+        // Retorno para el cartel de alerta
+        return new Result_Type(sizes[0], sizes[1], false);
     }
 
-    //TODO: CODE TO MODIFY INTERNALLY, ACCORDING TO STATE! - SECOND PANEL ACTION
+
     public Result_Type second_panel_action(){
-        System.out.println(this);
 
         String[] nameTrim;
-        String path;
-        double inSize = 0;
-        double outSize = 0;
+        String newExtension = "";
+        double[] sizes = new double[2];
 
+
+
+        // Elige desproteger
+        if(second_panel_unprotect){
+
+            // Strings para path de archivos
+            String extension;
+            String srcPath = second_panel_path_unprotect_uncompress;
+            String dstPath;
+
+            // Tamaño del módulo Hamming
+            int tamaño = 0;
+
+            nameTrim = srcPath.split("\\.");
+            extension = nameTrim[(nameTrim.length)-1];
+
+            // Dependiendo el número en la extension es el tamaño del módulo
+            switch(extension.charAt(2)){
+                case '1': tamaño = 32; break;
+                case '2': tamaño = 128; break;
+                case '3': tamaño = 1024; break;
+                case '4': tamaño = 4096; break;
+                case '5': tamaño = 16384; break;
+            }
+
+            // Dependiendo si la entrada tiene o no errores y si se corrigen.
+            if(extension.charAt(1)== 'E' && !second_panel_toCorrect){
+                switch (tamaño){
+                    case 32: newExtension = "DE1"; break;
+                    case 128: newExtension = "DE2"; break;
+                    case 1024: newExtension = "DE3"; break;
+                    case 4096: newExtension = "DE4"; break;
+                    case 16384: newExtension = "DE5"; break;
+                }
+            }
+            else{
+                switch (tamaño){
+                    case 32: newExtension = "DH1"; break;
+                    case 128: newExtension = "DH2"; break;
+                    case 1024: newExtension = "DH3"; break;
+                    case 4096: newExtension = "DH4"; break;
+                    case 16384: newExtension = "DH5"; break;
+                }
+            }
+
+
+            nameTrim = srcPath.split("\\.");
+            nameTrim[(nameTrim.length)-1] = newExtension;
+            dstPath = String.join(".",nameTrim);
+
+            sizes = Hamming.Decodificacion.decodificar(srcPath,dstPath,tamaño,second_panel_toCorrect);
+            resetHamming();
+
+
+        }
+        // Elige descomprimir
         if(second_panel_decompress){
+
+            String srcPath;
+            String dstPath;
 
             // Genero el nuevo path con el mismo nombre pero nueva extensión
             nameTrim = second_panel_path_unprotect_uncompress.split("\\.");
             nameTrim[(nameTrim.length)-1] = "DHU";
-            path = String.join(".",nameTrim);
+            dstPath = String.join(".",nameTrim);
 
-            try {
+            // Si antes protegio cambio la extension
 
-                ModuloCod moduloCod;
-                String module;
-
-                // Abro el archivo original
-                File fileR = new File(second_panel_path_unprotect_uncompress);
-                FileInputStream fr = new FileInputStream(fileR);
-                BufferedInputStream br = new BufferedInputStream(fr);
-                inSize = fileR.length();
-
-                // Creo el nuevo archivo para escribir
-                File fileW = new File(path);
-                fileW.createNewFile();
-                FileOutputStream fw = new FileOutputStream(fileW);
-                BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fw, StandardCharsets.ISO_8859_1));
-
-                // Leo la tabla
-                ModuloCod tablaMod = LecturaArchivo.leerTabla(br);
-
-                // Armo la tabla
-                Descompresion.generarTabla(tablaMod);
-
-                // Leo un módulo
-                moduloCod = LecturaArchivo.leerBytes(br);
-
-                do{
-                    // Decodifico
-                    module = Descompresion.decodificar(moduloCod);
-
-                    //Escribo
-                    EscrituraArchivo.escribirChar(bw,module);
-
-                    // Leo un módulo
-                    moduloCod = LecturaArchivo.leerBytes(br);
-                }
-                while(moduloCod.getChars() != -1);
-
-                outSize = fileW.length();
-                br.close();
-                bw.close();
-
+            if(second_panel_unprotect){
+                nameTrim = first_panel_path_protect_compress.split("\\.");
+                nameTrim[(nameTrim.length)-1] = newExtension;
+                srcPath = String.join(".",nameTrim);
             }
-            catch (IOException e){
-                System.out.println("Error en archivo.");
+            else{
+                srcPath = second_panel_path_unprotect_uncompress;
             }
+
+            sizes = Huffman.Descompresion.dehuffman(srcPath, dstPath);
+
+            resetHuffman();
 
         }
 
-
-        //Example of return
-        return new Result_Type(inSize, outSize, false);
+        // Retorno para el cartel de alerta
+        return new Result_Type(sizes[0], sizes[1], false);
     }
+
+
+    public static void resetHamming(){
+
+        Hamming.EscrituraArchivo.setByteActual((byte) 0);
+        Hamming.EscrituraArchivo.setByteCompleto((byte) 0);
+        Hamming.EscrituraArchivo.setCantActual((byte) 0 );
+        Hamming.EscrituraArchivo.setCantCompleto((byte) 0);
+    }
+
+    public static void resetHuffman(){
+
+        Huffman.Compresion.setTablaCod(new HashMap<>() );
+        Huffman.Descompresion.setTablaDecod(new HashMap<>());
+    }
+
+
 }

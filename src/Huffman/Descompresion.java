@@ -9,21 +9,37 @@ public class Descompresion {
 
     private static Map<String,Character> tablaDecod = new HashMap<>();
 
-    public static void dehuffman(String src, String dst){
+    public static double[] dehuffman(String src, String dst){
 
         ModuloCod moduloCod;
         String module;
+        double[] sizes = new double[2];
+
+        String[] trim = dst.split("\\.");
+        trim[trim.length - 1] = "THU";
+        String tablePath = String.join(".",trim);
 
         try {
-
-            FileInputStream fr = new FileInputStream(src);
+            // Archivo de lectura
+            File fileR = new File(src);
+            FileInputStream fr = new FileInputStream(fileR);
             BufferedInputStream br = new BufferedInputStream(fr);
 
-            FileOutputStream fw = new FileOutputStream(dst);
+            // Archivo de tabla
+            File fileT = new File(tablePath);
+            FileInputStream ft = new FileInputStream(fileT);
+            BufferedInputStream bt = new BufferedInputStream(ft);
+
+            // Archivo de escritura
+            File fileW = new File(dst);
+            fileW.createNewFile();
+            FileOutputStream fw = new FileOutputStream(fileW);
             BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fw, StandardCharsets.ISO_8859_1));
 
+
+
             // Leo la tabla
-            ModuloCod tablaMod = LecturaArchivo.leerTabla(br);
+            ModuloCod tablaMod = LecturaArchivo.leerTabla(bt);
 
             // Armo la tabla
             generarTabla(tablaMod);
@@ -43,7 +59,8 @@ public class Descompresion {
             }
             while(moduloCod.getChars() != -1);
 
-
+            sizes[0] = fileR.length();
+            sizes[1] = fileW.length();
             br.close();
             bw.close();
 
@@ -51,6 +68,7 @@ public class Descompresion {
             System.out.println("No se pudo abrir el archivo");
         }
 
+        return sizes;
     }
 
     // A partir de los bytes leídos del archivo armo la tabla
@@ -185,5 +203,10 @@ public class Descompresion {
         }
 
         return module;
+    }
+
+
+    public static void setTablaDecod(Map<String,Character> tabla){
+        tablaDecod = tabla;
     }
 }

@@ -1,6 +1,54 @@
 package Hamming;
 
+import java.io.*;
+
 public class Decodificacion {
+
+    public static double[] decodificar(String src, String dst, int tamaño, boolean error){
+
+        int[] module;
+        int[] hamModule;
+        double[] sizes = new double[2];
+
+        try {
+            // Archivo de lectura
+            File fileR = new File(src);
+            FileInputStream fr = new FileInputStream(fileR);
+            BufferedInputStream br = new BufferedInputStream(fr);
+
+            // Archivo de escritura
+            File fileW =  new File(dst);
+            fileW.createNewFile();
+            FileOutputStream fw = new FileOutputStream(fileW);
+            BufferedOutputStream bw = new BufferedOutputStream(fw);
+
+            do{
+
+                hamModule = LecturaArchivo.leerModulo(br,tamaño);
+
+                if(error){
+                    hamModule = Error.corregirError(hamModule, tamaño);
+                }
+
+                module = Decodificacion.dehamming(hamModule,tamaño);
+
+                EscrituraArchivo.escribirBits(bw,module);
+            }
+            while(LecturaArchivo.getBytes() != -1);
+
+            // Tamaños para imprimir en bytes
+            sizes[0] = fileR.length();
+            sizes[1] = fileW.length();
+            br.close();
+            bw.close();
+        }
+        catch (IOException e){
+            System.out.println("Error en Archivo");
+        }
+
+        return sizes;
+
+    }
 
     public static int[] dehamming(int[] vInfo, int tamaño){
         // Iteradores

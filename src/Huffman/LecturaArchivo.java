@@ -55,36 +55,14 @@ public class LecturaArchivo {
         boolean newLine1 = false;
         boolean newLine2 = false;
         byte[] module = new byte[600];
-        int i = 0;
+        int cant = 0;
         try{
-            // Leo hasta encontrar el \n que separa la tabla
-            do {
-                read = (byte) br.read();
-                if (read == 0x0a) {
-                    newLine1 = true;
-                    aux = read;
-                    read = (byte) br.read();
-                    if(read == 0x0a){
-                        newLine2 = true;
-                    }
-                    else{
-                        newLine1 = false;
-                        module[i] = aux;
-                        i++;
-                        module[i] = read;
-                        i++;
-                    }
-                }
-                else {
-                    module[i] = read;
-                    i++;
-                }
-            }while(!newLine1 | !newLine2);
+            cant = br.read(module,0,600);
 
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        return new ModuloCod(module,i);
+        return new ModuloCod(module,cant);
     }
 }

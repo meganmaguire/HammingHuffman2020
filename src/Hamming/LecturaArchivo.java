@@ -3,6 +3,8 @@ package Hamming;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.IntBuffer;
 
 public class LecturaArchivo {
 
@@ -79,6 +81,27 @@ public class LecturaArchivo {
         }
         return getBytes();
     }
+
+    public static int[] leerModulo(BufferedInputStream fb, int tamaño){
+
+        int cantByte = tamaño/8;
+        byte[] module = new byte[cantByte];
+        int[] intModule = new int[tamaño/32];
+
+        try{
+            setBytes(fb.read(module,0, cantByte));
+            // Convierto array de 4 bytes en int
+            IntBuffer intBuf = ByteBuffer.wrap(module).order(ByteOrder.BIG_ENDIAN).asIntBuffer();
+            intBuf.get(intModule);
+
+        }
+        catch(IOException e){
+            System.out.println("SEROMPETODOLOCO");
+        }
+
+        return intModule;
+    }
+
 
     public static int getBytes() {
         return bytes;

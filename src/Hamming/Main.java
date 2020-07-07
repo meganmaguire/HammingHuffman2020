@@ -31,36 +31,16 @@ public class Main {
             // reemplazar con do while y el primer read afuera.
             while(true) {
                 module = LecturaArchivo.leerBits(fb, (short) (tamaño-bitsControl));
-                System.out.print(Integer.toBinaryString(module[0]));
-                System.out.print(Integer.toBinaryString(module[1]));
-                System.out.print(Integer.toBinaryString(module[2]));
-                System.out.println(Integer.toBinaryString(module[3]));
                 if(isEmpty(module))
                     break;
 
                 hamModule = Codificacion.hamming(module, (short) tamaño);
-                System.out.print(Integer.toBinaryString(hamModule[0]));
-                System.out.print(Integer.toBinaryString(hamModule[1]));
-                System.out.print(Integer.toBinaryString(hamModule[2]));
-                System.out.println(Integer.toBinaryString(hamModule[3]));
 
                 //hamModule = Error.insertarError(hamModule,tamaño);
-                System.out.print(Integer.toBinaryString(hamModule[0]));
-                System.out.print(Integer.toBinaryString(hamModule[1]));
-                System.out.print(Integer.toBinaryString(hamModule[2]));
-                System.out.println(Integer.toBinaryString(hamModule[3]));
 
                 //hamModule = Error.corregirError(hamModule,tamaño);
-                System.out.print(Integer.toBinaryString(hamModule[0]));
-                System.out.print(Integer.toBinaryString(hamModule[1]));
-                System.out.print(Integer.toBinaryString(hamModule[2]));
-                System.out.println(Integer.toBinaryString(hamModule[3]));
 
                 module = Decodificacion.dehamming(hamModule,tamaño);
-                System.out.print(Integer.toBinaryString(module[0]));
-                System.out.print(Integer.toBinaryString(module[1]));
-                System.out.print(Integer.toBinaryString(module[2]));
-                System.out.println(Integer.toBinaryString(module[3]));
 
                 EscrituraArchivo.escribirInt(hamminizado, hamModule);
                 EscrituraArchivo.escribirBits(dehamminizado,module);
@@ -80,7 +60,7 @@ public class Main {
     }
 
     public static boolean isEmpty(int[] module) {
-        int bytes = LecturaArchivo.getBytes();
+        int bytes = Hamming.LecturaArchivo.getBytes();
         boolean emptyModule = true;
         for(int i=0; i<module.length; i++){
             if(module[i] != 0 )
