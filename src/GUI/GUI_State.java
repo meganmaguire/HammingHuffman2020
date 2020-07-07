@@ -1,9 +1,10 @@
 package GUI;
 
 import model.DateBlock;
-import model.Result_Type;
+import model.ResultType;
 
 import javax.swing.*;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -30,6 +31,11 @@ public class GUI_State {
     boolean second_panel_unprotect = false;
     boolean second_panel_toCorrect = false;
     boolean second_panel_decompress = false;
+
+    /* Date formats */
+    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+    SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm");
+    SimpleDateFormat datetimeFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm");
 
     /* Variables estáticas */
     private static Map<Character,Integer> tablaFreq = new HashMap<>();
@@ -58,20 +64,15 @@ public class GUI_State {
     }
 
     //TODO: CODE TO MODIFY INTERNALLY, ACCORDING TO STATE! - FIRST PANEL ACTION
-    public Result_Type first_panel_action(){
+    public ResultType first_panel_action(){
 
         String[] nameTrim;
         double[] sizes = new double[2];
-
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-        SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm");
 
         Date date = first_panel_date_time_model.getDate();
 
         String stringDate = dateFormat.format(date);
         String stringTime = timeFormat.format(date);
-
-
 
 
         // Eligió comprimir
@@ -85,6 +86,12 @@ public class GUI_State {
             nameTrim = srcPath.split("\\.");
             nameTrim[(nameTrim.length)-1] = "HUF";
             dstPath = String.join(".",nameTrim);
+
+            // Inserto solo si no voy a proteger, para no codificar la fecha
+            if(!first_panel_protect) {
+                DateBlock.insertDate(dstPath, stringDate, stringTime);
+            }
+
 
             sizes = Huffman.Compresion.huffman(srcPath, dstPath);
 
@@ -142,6 +149,7 @@ public class GUI_State {
                 srcPath = first_panel_path_protect_compress;
             }
 
+
             DateBlock.insertDate(dstPath,stringDate,stringTime);
 
             // Codifico
@@ -154,16 +162,26 @@ public class GUI_State {
 
 
         // Retorno para el cartel de alerta
-        return new Result_Type(sizes[0], sizes[1], false);
+        if(!first_panel_protect && !first_panel_compress){
+            return new ResultType("Debe seleccionarse alguna opción", sizes[0], sizes[1], true);
+        }
+        else{
+            return new ResultType("¡Operación exitosa!",sizes[0], sizes[1], false);
+        }
+
     }
 
 
-    public Result_Type second_panel_action(){
+    public ResultType second_panel_action(){
 
         String[] nameTrim;
         String newExtension = "";
         double[] sizes = new double[2];
 
+        String dateTime;
+
+        boolean readDate = false;
+        boolean dateError = false;
 
 
         // Elige desproteger
@@ -214,8 +232,25 @@ public class GUI_State {
             nameTrim[(nameTrim.length)-1] = newExtension;
             dstPath = String.join(".",nameTrim);
 
-            sizes = Hamming.Decodificacion.decodificar(srcPath,dstPath,tamaño,second_panel_toCorrect);
-            resetHamming();
+            dateTime = DateBlock.extractDate(srcPath);
+
+            try {
+                Date date = datetimeFormat.parse(dateTime);
+
+                if(date.before(new Date())){
+
+                    sizes = Hamming.Decodificacion.decodificar(srcPath,dstPath,tamaño,second_panel_toCorrect,true);
+                    resetHamming();
+                    readDate = true;
+
+                }
+                else{
+                    dateError = true;
+                }
+
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
 
 
         }
@@ -241,14 +276,45 @@ public class GUI_State {
                 srcPath = second_panel_path_unprotect_uncompress;
             }
 
-            sizes = Huffman.Descompresion.dehuffman(srcPath, dstPath);
+            if(!readDate){
 
-            resetHuffman();
+                dateTime = DateBlock.extractDate(srcPath);
 
+                try {
+                    Date date = datetimeFormat.parse(dateTime);
+
+                    if(date.before(new Date())){
+
+                        sizes = Huffman.Descompresion.dehuffman(srcPath, dstPath, true);
+                        resetHuffman();
+                        readDate = true;
+
+                    }
+                    else{
+                        dateError = true;
+                    }
+
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+            else{
+                sizes = Huffman.Descompresion.dehuffman(srcPath, dstPath, false);
+                resetHuffman();
+            }
         }
 
         // Retorno para el cartel de alerta
-        return new Result_Type(sizes[0], sizes[1], false);
+        if(!second_panel_unprotect && !second_panel_decompress){
+            return new ResultType("Debe seleccionarse alguna opción", sizes[0], sizes[1], true);
+        }
+        if(dateError){
+            return new ResultType("El archivo no puede descomprimirse/descompactarse porque la fecha configurada es posterior a la actual", sizes[0], sizes[1], dateError);
+        }
+        else{
+            return new ResultType("¡Operación exitosa!",sizes[0], sizes[1], dateError);
+        }
+
     }
 
 

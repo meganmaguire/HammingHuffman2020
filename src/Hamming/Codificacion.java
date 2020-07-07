@@ -89,7 +89,7 @@ public class Codificacion {
             // Archivo de escritura
             File fileW = new File(dst);
             fileW.createNewFile();
-            FileOutputStream fw = new FileOutputStream(dst);
+            FileOutputStream fw = new FileOutputStream(dst,true);
             BufferedOutputStream bw = new BufferedOutputStream(fw);
 
             module = LecturaArchivo.leerBits(br, (short) (tamaño-bitsControl));
@@ -109,12 +109,12 @@ public class Codificacion {
 
             }
 
-            // Tamaños para imprimir en bytes
-            sizes[0] = fileR.length();
-            sizes[1] = fileW.length();
             bw.close();
             br.close();
 
+            // Tamaños para imprimir en bytes
+            sizes[0] = fileR.length();
+            sizes[1] = fileW.length();
         }
         catch(IOException e){
             System.out.println("Error en archivo");

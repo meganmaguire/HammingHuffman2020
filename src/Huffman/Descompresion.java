@@ -9,8 +9,9 @@ public class Descompresion {
 
     private static Map<String,Character> tablaDecod = new HashMap<>();
 
-    public static double[] dehuffman(String src, String dst){
+    public static double[] dehuffman(String src, String dst, boolean fecha){
 
+        byte[] consume = new byte[5];
         ModuloCod moduloCod;
         String module;
         double[] sizes = new double[2];
@@ -37,6 +38,9 @@ public class Descompresion {
             BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fw, StandardCharsets.ISO_8859_1));
 
 
+            if(fecha){
+                br.read(consume,0,5);
+            }
 
             // Leo la tabla
             ModuloCod tablaMod = LecturaArchivo.leerTabla(bt);
@@ -59,10 +63,11 @@ public class Descompresion {
             }
             while(moduloCod.getChars() != -1);
 
-            sizes[0] = fileR.length();
-            sizes[1] = fileW.length();
             br.close();
             bw.close();
+
+            sizes[0] = fileR.length();
+            sizes[1] = fileW.length();
 
         } catch (IOException e) {
             System.out.println("No se pudo abrir el archivo");

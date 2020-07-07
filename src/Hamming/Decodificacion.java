@@ -4,11 +4,12 @@ import java.io.*;
 
 public class Decodificacion {
 
-    public static double[] decodificar(String src, String dst, int tamaño, boolean error){
+    public static double[] decodificar(String src, String dst, int tamaño, boolean error, boolean fecha){
 
         int[] module;
         int[] hamModule;
         double[] sizes = new double[2];
+        byte[] consume = new byte[5];
 
         try {
             // Archivo de lectura
@@ -17,11 +18,16 @@ public class Decodificacion {
             BufferedInputStream br = new BufferedInputStream(fr);
 
             // Archivo de escritura
-            File fileW =  new File(dst);
+            File fileW = new File(dst);
             fileW.createNewFile();
             FileOutputStream fw = new FileOutputStream(fileW);
             BufferedOutputStream bw = new BufferedOutputStream(fw);
 
+
+            // Consumo los primeros 5 bytes
+            if(fecha) {
+                br.read(consume, 0, 5);
+            }
             do{
 
                 hamModule = LecturaArchivo.leerModulo(br,tamaño);
@@ -36,11 +42,13 @@ public class Decodificacion {
             }
             while(LecturaArchivo.getBytes() != -1);
 
+            br.close();
+            bw.close();
+
             // Tamaños para imprimir en bytes
             sizes[0] = fileR.length();
             sizes[1] = fileW.length();
-            br.close();
-            bw.close();
+
         }
         catch (IOException e){
             System.out.println("Error en Archivo");

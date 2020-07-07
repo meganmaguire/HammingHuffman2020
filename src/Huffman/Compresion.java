@@ -85,11 +85,12 @@ public class Compresion {
             }
             while (chars != -1);
 
-            sizes[0] = fileR.length();
-            sizes[1] = fileW.length();
             bw.close();
             bt.close();
             br.close();
+
+            sizes[0] = fileR.length();
+            sizes[1] = fileW.length();
 
         }
         catch (IOException e){

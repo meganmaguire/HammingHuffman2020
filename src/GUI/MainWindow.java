@@ -12,7 +12,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.SpinnerDateModel;
 import javax.swing.filechooser.FileSystemView;
-import model.Result_Type;
+import model.ResultType;
 
 /**
  *
@@ -34,18 +34,10 @@ public class MainWindow extends javax.swing.JFrame {
         gui_state = new GUI_State();
         first_panel_date_time_model = (SpinnerDateModel) first_panel_date_time.getModel();
         first_panel_date_time.setModel(first_panel_date_time_model);
-        
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-        SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm");
+
         
         Date date = first_panel_date_time_model.getDate();
-        
-        String stringDate = dateFormat.format(date);
-        String stringTime = timeFormat.format(date);
-        
-        System.out.println(first_panel_date_time_model.getDate());
-        System.out.println(stringDate);
-        System.out.println(stringTime);
+
     }
 
     /**
@@ -393,9 +385,9 @@ public class MainWindow extends javax.swing.JFrame {
 
     private void first_panel_button_acceptActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_first_panel_button_acceptActionPerformed
         gui_state.first_panel_date_time_model = (SpinnerDateModel) first_panel_date_time.getModel();
-        Result_Type infoToShow = gui_state.first_panel_action();
+        ResultType infoToShow = gui_state.first_panel_action();
         if(infoToShow.isError())
-            error_operation_Dialog();
+            error_operation_Dialog(infoToShow);
         else
             succesful_operationDialog(infoToShow);
     }//GEN-LAST:event_first_panel_button_acceptActionPerformed
@@ -446,9 +438,9 @@ public class MainWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_second_panel_unzip_checkBoxActionPerformed
 
     private void second_panel_button_acceptActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_second_panel_button_acceptActionPerformed
-        Result_Type infoToShow = gui_state.second_panel_action();
+        ResultType infoToShow = gui_state.second_panel_action();
         if(infoToShow.isError())
-            error_operation_Dialog();
+            error_operation_Dialog(infoToShow);
         else
             succesful_operationDialog(infoToShow);
     }//GEN-LAST:event_second_panel_button_acceptActionPerformed
@@ -464,13 +456,13 @@ public class MainWindow extends javax.swing.JFrame {
         return null;
     }
     
-    public void succesful_operationDialog(Result_Type fileSize){
-        JOptionPane.showMessageDialog(null, "¡Operación Exitosa!\n\n \tTamaño Original = \t"+fileSize.getOriginalSize() + " bytes" + "\n \tTamaño Nuevo = \t" + fileSize.getNewSize() + " bytes", "Resultado de la Operación", JOptionPane.INFORMATION_MESSAGE);
+    public void succesful_operationDialog(ResultType result){
+        JOptionPane.showMessageDialog(null, result.getMsg() + "\n\n \tTamaño Original = \t"+result.getOriginalSize() + " bytes" + "\n \tTamaño Nuevo = \t" + result.getNewSize() + " bytes", "Resultado de la Operación", JOptionPane.INFORMATION_MESSAGE);
     }
 
     //Error in operation
-    public void error_operation_Dialog(){
-        JOptionPane.showMessageDialog(null, "Operación con Error !", "Mensaje de Error", JOptionPane.ERROR_MESSAGE);
+    public void error_operation_Dialog(ResultType result){
+        JOptionPane.showMessageDialog(null, result.getMsg(), "Mensaje de Error", JOptionPane.ERROR_MESSAGE);
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -1,10 +1,12 @@
 package model;
 
 //Class to return to the UI the information about files!
-public class Result_Type {
-    double originalSize = 0.0;
-    double newSize = 0.0;
-    boolean error = false;
+public class ResultType {
+
+    private String msg = "Operación exitosa";
+    private double originalSize = 0.0;
+    private double newSize = 0.0;
+    private boolean error = false;
 
     public boolean isError() {
         return error;
@@ -30,9 +32,18 @@ public class Result_Type {
         this.newSize = newSize;
     }
 
-    public Result_Type(double originalSize, double newSize, boolean error){
+    public ResultType(String msg, double originalSize, double newSize, boolean error){
+        this.setMsg(msg);
         this.originalSize = originalSize;
         this.newSize = newSize;
         this.error = error;
+    }
+
+    public String getMsg() {
+        return msg;
+    }
+
+    public void setMsg(String msg) {
+        this.msg = msg;
     }
 }
