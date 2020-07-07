@@ -30,6 +30,7 @@ public class DateBlock {
         try {
             // Abro archivo
             File fileW = new File(dst);
+            fileW.delete();
             fileW.createNewFile();
             FileOutputStream fw = new FileOutputStream(fileW);
             BufferedOutputStream bw = new BufferedOutputStream(fw);

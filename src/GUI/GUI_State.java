@@ -3,6 +3,12 @@ package GUI;
 import model.DateBlock;
 import model.ResultType;
 
+import java.io.File;
+import java.net.InetAddress;
+import java.util.Date;
+import org.apache.commons.net.ntp.NTPUDPClient;
+import org.apache.commons.net.ntp.TimeInfo;
+
 import javax.swing.*;
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -83,8 +89,6 @@ public class GUI_State {
         String stringDate = dateFormat.format(date);
         String stringTime = timeFormat.format(date);
 
-        originalText = "";
-        processedText = "";
 
 
         // Eligió comprimir
@@ -92,6 +96,9 @@ public class GUI_State {
 
             String srcPath = first_panel_path_protect_compress;
             String dstPath;
+            originalText = "";
+            processedText = "";
+
 
 
             // Genero el nuevo path con el mismo nombre pero nueva extensión
@@ -120,6 +127,9 @@ public class GUI_State {
             String extension = "";
             String srcPath;
             String dstPath;
+            originalText = "";
+            processedText = "";
+
 
             // Tamaño del modulo Hamming
             int tamaño = first_panel_module_size_first;
@@ -173,6 +183,12 @@ public class GUI_State {
             if(!first_panel_compress){
                 sizeOriginal = sizes[0];
             }
+
+            else{
+                File file = new File(srcPath);
+
+                file.delete();
+            }
             sizeNew = sizes[1];
 
             resetHamming();
@@ -205,8 +221,7 @@ public class GUI_State {
         boolean readDate = false;
         boolean dateError = false;
 
-        originalText = "";
-        processedText = "";
+
 
 
         // Elige desproteger
@@ -216,6 +231,9 @@ public class GUI_State {
             String extension;
             String srcPath = second_panel_path_unprotect_uncompress;
             String dstPath;
+
+            originalText = "";
+            processedText = "";
 
             // Tamaño del módulo Hamming
             int tamaño = 0;
@@ -289,6 +307,9 @@ public class GUI_State {
             String srcPath;
             String dstPath;
 
+            originalText = "";
+            processedText = "";
+
             // Genero el nuevo path con el mismo nombre pero nueva extensión
             nameTrim = second_panel_path_unprotect_uncompress.split("\\.");
             nameTrim[(nameTrim.length)-1] = "DHU";
@@ -311,8 +332,15 @@ public class GUI_State {
 
                 try {
                     Date date = datetimeFormat.parse(dateTime);
+                    Date actualDate;
+                    try {
+                        actualDate = getTimeFromServer();
+                    }
+                    catch (Exception e){
+                        actualDate = new Date();
+                    }
 
-                    if(date.before(new Date())){
+                    if(date.before(actualDate)){
 
                         sizes = Huffman.Descompresion.dehuffman(srcPath, dstPath, true);
                         if(!second_panel_unprotect){
@@ -357,6 +385,20 @@ public class GUI_State {
 
     }
 
+    public static Date getTimeFromServer() throws Exception{
+
+        String TIME_SERVER = "time-a.nist.gov";
+        NTPUDPClient timeClient = new NTPUDPClient();
+        InetAddress inetAddress = InetAddress.getByName(TIME_SERVER);
+        TimeInfo timeInfo = timeClient.getTime(inetAddress);
+
+        long returnTime = timeInfo.getReturnTime();
+
+        Date time = new Date(returnTime);
+        System.out.println("Time from " + TIME_SERVER + ": " + time);
+        return time;
+    }
+
 
     public static void resetHamming(){
 
@@ -386,6 +428,7 @@ public class GUI_State {
                 originalText += aux;
                 aux = br.readLine();
             }
+            br.close();
 
             br = new BufferedReader(new FileReader(dst));
 
@@ -395,6 +438,8 @@ public class GUI_State {
                 processedText += aux;
                 aux = br.readLine();
             }
+
+            br.close();
 
         }
         catch(IOException e){
